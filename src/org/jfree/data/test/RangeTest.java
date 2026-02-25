@@ -191,7 +191,7 @@ public class RangeTest {
 
 
     // -----------------------------
-    // FUNCTION 4: getLowerBound()
+    // FUNCTION 5: getLowerBound()
     // -----------------------------
 
 
