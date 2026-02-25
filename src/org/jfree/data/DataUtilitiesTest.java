@@ -250,7 +250,69 @@ public class DataUtilitiesTest {
 	//	       EC4: mixed negative/positive values, EC5: contains NaN/Infinity }
 	//	     BVA: N/A
 	// ----------------------------
-	
+
+	// EC1: valid non-null array
+	@Test
+	public void createNumberArrayWithValidData() {
+		// setup
+		double[] data = { 1.5, 2.0, 3.5 };
+		Number[] expected = { 1.5, 2.0, 3.5 };
+		
+		// exercise
+		Number[] result = DataUtilities.createNumberArray(data);
+		
+		// verify
+		assertArrayEquals("The created Number array should match the input double array", expected, result);
+	}
+
+	// EC2: null array
+	@Test(expected = InvalidParameterException.class)
+	public void createNumberArrayForNull() {
+		// exercise
+		DataUtilities.createNumberArray(null);
+	}
+
+	// EC3: empty array
+	@Test
+	public void createNumberArrayWithEmptyArray() {
+		// setup
+		double[] data = {};
+		Number[] expected = {};
+		
+		// exercise
+		Number[] result = DataUtilities.createNumberArray(data);
+		
+		// verify
+		assertArrayEquals("The created Number array should be empty", expected, result);
+	}
+
+	// EC4: mixed negative/positive values
+	@Test
+	public void createNumberArrayWithMixedValues() {
+		// setup
+		double[] data = { -1.5, 0.0, 4.2 };
+		Number[] expected = { -1.5, 0.0, 4.2 };
+		
+		// exercise
+		Number[] result = DataUtilities.createNumberArray(data);
+		
+		// verify
+		assertArrayEquals("The created Number array should handle mixed positive, negative, and zero values", expected, result);
+	}
+
+	// EC5: contains NaN/Infinity
+	@Test
+	public void createNumberArrayWithSpecialValues() {
+		// setup
+		double[] data = { Double.NaN, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY };
+		Number[] expected = { Double.NaN, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY };
+		
+		// exercise
+		Number[] result = DataUtilities.createNumberArray(data);
+		
+		// verify
+		assertArrayEquals("The created Number array should correctly store NaN and Infinity values", expected, result);
+	}
 
 	// ----------------------------
 	// createNumberArray2D(double[][] data)
