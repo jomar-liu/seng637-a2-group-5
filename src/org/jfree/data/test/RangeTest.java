@@ -21,37 +21,33 @@ public class RangeTest {
 
     @Test
     public void testContainsBelowRange() {
-    	// Performing BVT just below the lower boundary (1.0)
-        assertFalse(range.contains(0.0));
+        // Performing BVT just below the lower boundary (1.0)
+        assertFalse("Value 0.0 should be outside the range (1.0 to 5.0)", range.contains(0.0));
     }
 
     @Test
     public void testContainsInsideRange() {
-    	// Testing a value inside the valid range (between 1.0 and 5.0)
-        assertTrue(range.contains(3.0));
+        // Testing a value inside the valid range (between 1.0 and 5.0)
+        assertTrue("Value 3.0 should be inside the range (1.0 to 5.0)", range.contains(3.0));
     }
 
     @Test
     public void testContainsLowerBoundary() {
-    	// Performing BVT at the lower boundary value (1.0)
-        assertTrue(range.contains(1.0));
+        // Performing BVT at the lower boundary value (1.0)
+        assertTrue("Value 1.0 should be within the range (1.0 to 5.0)", range.contains(1.0));
     }
 
     @Test
     public void testContainsUpperBoundary() {
-    	// Performing BVT at the upper boundary value (5.0)
-        assertTrue(range.contains(5.0));
+        // Performing BVT at the upper boundary value (5.0)
+        assertTrue("Value 5.0 should be within the range (1.0 to 5.0)", range.contains(5.0));
     }
 
     @Test
     public void testContainsAboveRange() {
-    	// Performing BVT just above the upper boundary (5.0)
-        assertFalse(range.contains(6.0));
+        // Performing BVT just above the upper boundary (5.0)
+        assertFalse("Value 6.0 should be outside the range (1.0 to 5.0)", range.contains(6.0));
     }
-
-
-
-
 
     // -------------------------
     // FUNCTION 2: getLength()
@@ -59,84 +55,74 @@ public class RangeTest {
 
     @Test
     public void testGetLength() {
-    	// Verifying that the length of the range (from 1.0 to 5.0) is correctly calculated
-        assertEquals(4.0, range.getLength(), 0.0001);
+        // Verifying that the length of the range (from 1.0 to 5.0) is correctly calculated
+        assertEquals("Length of range (1.0 to 5.0) should be 4.0", 4.0, range.getLength(), 0.0001);
     }
 
     @Test
     public void testGetLengthSmallRange() {
-    	// Test with ranges that are close to boundaries
+        // Test with ranges that are close to boundaries
         Range smallRange = new Range(1.0, 1.1);
-        assertEquals(0.1, smallRange.getLength(), 0.0001);
+        assertEquals("Length of range (1.0 to 1.1) should be 0.1", 0.1, smallRange.getLength(), 0.0001);
     }
 
     @Test
     public void testGetLengthLargeRange() {
-    	// Test with ranges that are wide apart from the boundaries
+        // Test with ranges that are wide apart from the boundaries
         Range largeRange = new Range(1.0, 1000000.0);
-        assertEquals(999999.0, largeRange.getLength(), 0.0001);
+        assertEquals("Length of range (1.0 to 1000000.0) should be 999999.0", 999999.0, largeRange.getLength(), 0.0001);
     }
-
 
     @Test
     public void testGetLengthZeroRange() {
-    	// Zero-length range (same bounds)
+        // Zero-length range (same bounds)
         Range zeroRange = new Range(5.0, 5.0);
-        assertEquals(0.0, zeroRange.getLength(), 0.0001);
+        assertEquals("Length of range (5.0 to 5.0) should be 0.0", 0.0, zeroRange.getLength(), 0.0001);
     }
-
-	/*
-	 * @Test public void testGetLengthNegativeRange() { // Test negative range Range
-	 * negativeRange = new Range(5.0, 1.0); assertEquals(4.0,
-	 * negativeRange.getLength(), 0.0001); // Length is positive, but range is
-	 * inverted }
-	 */
 
     @Test
     public void testGetLengthNegativeToPositive() {
-    	// Negative and positive range values
+        // Negative and positive range values
         Range negativeToPositive = new Range(-5.0, 5.0);
-        assertEquals(10.0, negativeToPositive.getLength(), 0.0001);
+        assertEquals("Length of range (-5.0 to 5.0) should be 10.0", 10.0, negativeToPositive.getLength(), 0.0001);
     }
-
 
     // -----------------------------
     // FUNCTION 3: getCentralValue()
     // -----------------------------
 
-
     @Test
     public void testGetCentralValue() {
-    	// Testing function based on the range (between 1.0 and 5.0)
-        assertEquals(3.0, range.getCentralValue(), 0.0001);
+        // Testing function based on the range (between 1.0 and 5.0)
+        assertEquals("Central value of range (1.0 to 5.0) should be 3.0", 3.0, range.getCentralValue(), 0.0001);
     }
 
     @Test
     public void testGetCentralValueSmallRange() {
-    	// Small range (1.0 to 1.1)
+        // Small range (1.0 to 1.1)
         Range smallRange = new Range(1.0, 1.1);
-        assertEquals(1.05, smallRange.getCentralValue(), 0.0001);
+        assertEquals("Central value of range (1.0 to 1.1) should be 1.05", 1.05, smallRange.getCentralValue(), 0.0001);
     }
 
     @Test
     public void testGetCentralValueZeroRange() {
-    	// Zero-length range (5.0 to 5.0)
+        // Zero-length range (5.0 to 5.0)
         Range zeroRange = new Range(5.0, 5.0);
-        assertEquals(5.0, zeroRange.getCentralValue(), 0.0001);
+        assertEquals("Central value of range (5.0 to 5.0) should be 5.0", 5.0, zeroRange.getCentralValue(), 0.0001);
     }
 
     @Test
     public void testGetCentralValueNegativeToPositive() {
-    	//  Negative to positive range (-5.0 to 5.0)
+        // Negative to positive range (-5.0 to 5.0)
         Range negativeToPositive = new Range(-5.0, 5.0);
-        assertEquals(0.0, negativeToPositive.getCentralValue(), 0.0001);
+        assertEquals("Central value of range (-5.0 to 5.0) should be 0.0", 0.0, negativeToPositive.getCentralValue(), 0.0001);
     }
 
     @Test
     public void testGetCentralValueLargeRange() {
-    	//  Large range (1.0 to 1000000.0)
+        // Large range (1.0 to 1000000.0)
         Range largeRange = new Range(1.0, 1000000.0);
-        assertEquals(500000.5, largeRange.getCentralValue(), 0.0001);
+        assertEquals("Central value of range (1.0 to 1000000.0) should be 500000.5", 500000.5, largeRange.getCentralValue(), 0.0001);
     }
 
 	/*
