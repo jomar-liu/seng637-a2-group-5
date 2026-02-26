@@ -7,409 +7,612 @@ import org.junit.Test;
 import java.security.InvalidParameterException;
 
 public class DataUtilitiesTest {
-	
 
-	// ----------------------------
-	// calculateColumnTotal(Values2D data, int column)
-	// data: { EC1: Valid non-null Values2D, EC2: null Values2D, 
+    // ----------------------------
+    // calculateColumnTotal(Values2D data, int column)
+    // data: { EC1: Valid non-null Values2D, EC2: null Values2D,
 	//         EC3: Values2D with some null cells }
 	//       BVA: N/A
-	// column: { EC4: column < 0, EC5: 0 <= column < columnCount, 
+    // column: { EC4: column < 0, EC5: 0 <= column < columnCount,
 	//           EC6: column >= columnCount }
 	//         BVA: { BLB: -1, LB: 0, BUB: columnCount - 1, UB: columnCount }
-	// ----------------------------
-	
-	// EC1 + EC5 (LB)
-	@Test
+    // ----------------------------
+
+    // EC1 + EC5 (LB)
+    @Test
     public void calculateColumnTotalForTwoValuesWithLBColumn() {
         // setup
         Mockery mockingContext = new Mockery();
         final Values2D values = mockingContext.mock(Values2D.class);
 
-        mockingContext.checking(new Expectations() {{
-            oneOf(values).getRowCount();
-            will(returnValue(2));
-            oneOf(values).getValue(0, 0);
-            will(returnValue(7.5));
-            oneOf(values).getValue(1, 0);
-            will(returnValue(-2.5));
-        }});
+        mockingContext.checking(new Expectations() {
+            {
+                oneOf(values).getRowCount();
+                will(returnValue(2));
+                oneOf(values).getValue(0, 0);
+                will(returnValue(7.5));
+                oneOf(values).getValue(1, 0);
+                will(returnValue(-2.5));
+            }
+        });
 
         // exercise
         double result = DataUtilities.calculateColumnTotal(values, 0);
 
         // verify
-        assertEquals(5.0, result, .000000001d);
+        assertEquals("The column total for two values should be calculated correctly", 5.0, result, .000000001d);
         mockingContext.assertIsSatisfied();
 
         // tear-down: NONE in this test method
     }
-	
-	// EC2
-	@Test(expected = InvalidParameterException.class)
-	public void calculateColumnTotalForNull() {
-		// exercise
-		DataUtilities.calculateColumnTotal(null, 0);
-	}
-	
-	// EC3 + EC5 (BUB)
-	@Test
+
+    // EC2
+    @Test(expected = InvalidParameterException.class)
+    public void calculateColumnTotalForNull() {
+        // exercise
+        DataUtilities.calculateColumnTotal(null, 0);
+    }
+
+    // EC3 + EC5 (BUB)
+    @Test
     public void calculateColumnTotalForValuesWithNullAndBUBColumn() {
         // setup
         Mockery mockingContext = new Mockery();
         final Values2D values = mockingContext.mock(Values2D.class);
 
-        mockingContext.checking(new Expectations() {{
-            oneOf(values).getRowCount();
-            will(returnValue(2));
-            oneOf(values).getColumnCount();
-            will(returnValue(2));
-            oneOf(values).getValue(0, 1);
-            will(returnValue(4.0));
-            oneOf(values).getValue(1, 1);
-            will(returnValue(null));
-        }});
+        mockingContext.checking(new Expectations() {
+            {
+                oneOf(values).getRowCount();
+                will(returnValue(2));
+                oneOf(values).getColumnCount();
+                will(returnValue(2));
+                oneOf(values).getValue(0, 1);
+                will(returnValue(4.0));
+                oneOf(values).getValue(1, 1);
+                will(returnValue(null));
+            }
+        });
 
         // exercise
         double result = DataUtilities.calculateColumnTotal(values, 1);
 
         // verify
-        assertEquals(4.0, result, .000000001d);
+        assertEquals("The column total should handle null values correctly", 4.0, result, .000000001d);
         mockingContext.assertIsSatisfied();
 
         // tear-down: NONE in this test method
     }
-	
-	// EC4 (BLB)
-	@Test
+
+    // EC4 (BLB)
+    @Test
     public void calculateColumnTotalForBLBColumn() {
         // setup
         Mockery mockingContext = new Mockery();
         final Values2D values = mockingContext.mock(Values2D.class);
 
-        mockingContext.checking(new Expectations() {{
-            oneOf(values).getRowCount();
-            will(returnValue(2));
-            allowing(values).getValue(with(any(int.class)), with(equal(-1)));
-            will(returnValue(null));
-        }});
+        mockingContext.checking(new Expectations() {
+            {
+                oneOf(values).getRowCount();
+                will(returnValue(2));
+                allowing(values).getValue(with(any(int.class)), with(equal(-1)));
+                will(returnValue(null));
+            }
+        });
 
         // exercise
         double result = DataUtilities.calculateColumnTotal(values, -1);
 
         // verify
-        assertEquals(0.0, result, .000000001d);
+        assertEquals("The column total for a column index below the lower bound should be 0.0", 0.0, result,
+                .000000001d);
         mockingContext.assertIsSatisfied();
 
         // tear-down: NONE in this test method
     }
-	
-	// EC6 (UB)
-	@Test
+
+    // EC6 (UB)
+    @Test
     public void calculateColumnTotalForUBColumn() {
         // setup
         Mockery mockingContext = new Mockery();
         final Values2D values = mockingContext.mock(Values2D.class);
 
-        mockingContext.checking(new Expectations() {{
-            oneOf(values).getRowCount();
-            will(returnValue(2));
-            allowing(values).getValue(with(any(int.class)), with(equal(2)));
-            will(returnValue(null));
-        }});
+        mockingContext.checking(new Expectations() {
+            {
+                oneOf(values).getRowCount();
+                will(returnValue(2));
+                allowing(values).getValue(with(any(int.class)), with(equal(2)));
+                will(returnValue(null));
+            }
+        });
 
         // exercise
         double result = DataUtilities.calculateColumnTotal(values, 2);
 
         // verify
-        assertEquals(0.0, result, .000000001d);
+        assertEquals("The column total for a column index above the upper bound should be 0.0", 0.0, result,
+                .000000001d);
         mockingContext.assertIsSatisfied();
 
         // tear-down: NONE in this test method
     }
 
-	// ----------------------------
-	// calculateRowTotal(Values2D data, int row)
-	// data: { EC1: Valid non-null Values2D, EC2: null Values2D, 
+    // ----------------------------
+    // calculateRowTotal(Values2D data, int row)
+    // data: { EC1: Valid non-null Values2D, EC2: null Values2D,
 	//         EC3: Values2D with some null cells }
 	//	     BVA: N/A
-	// row: { EC4: row < 0, EC5: 0 <= row < rowCount, EC6: row >= rowCount }
+    // row: { EC4: row < 0, EC5: 0 <= row < rowCount, EC6: row >= rowCount }
 	//	    BVA: { BLB: -1, LB: 0, BUB: rowCount - 1, UB: rowCount }
-	// ----------------------------
+    // ----------------------------
 
-	// EC1 + EC5 (LB)
-	@Test
+    // EC1 + EC5 (LB)
+    @Test
     public void calculateRowTotalForTwoValuesWithLBRow() {
         // setup
         Mockery mockingContext = new Mockery();
         final Values2D values = mockingContext.mock(Values2D.class);
 
-        mockingContext.checking(new Expectations() {{
-            oneOf(values).getColumnCount();
-            will(returnValue(2));
-            oneOf(values).getValue(0, 0);
-            will(returnValue(-2.0));
-            oneOf(values).getValue(0, 1);
-            will(returnValue(4.0));
-        }});
+        mockingContext.checking(new Expectations() {
+            {
+                oneOf(values).getColumnCount();
+                will(returnValue(2));
+                oneOf(values).getValue(0, 0);
+                will(returnValue(-2.0));
+                oneOf(values).getValue(0, 1);
+                will(returnValue(4.0));
+            }
+        });
 
         // exercise
         double result = DataUtilities.calculateRowTotal(values, 0);
 
         // verify
-        assertEquals(2.0, result, .000000001d);
+        assertEquals("The row total for two values should be calculated correctly", 2.0, result, .000000001d);
         mockingContext.assertIsSatisfied();
 
         // tear-down: NONE in this test method
     }
-	
-	// EC2
-	@Test(expected = InvalidParameterException.class)
-	public void calculateRowTotalForNull() {
-		// exercise
-		DataUtilities.calculateRowTotal(null, 0);
-	}
-	
-	// EC3 + EC5 (BUB)
-	@Test
+
+    // EC2
+    @Test(expected = InvalidParameterException.class)
+    public void calculateRowTotalForNull() {
+        // exercise
+        DataUtilities.calculateRowTotal(null, 0);
+    }
+
+    // EC3 + EC5 (BUB)
+    @Test
     public void calculateRowTotalForValuesWithNullAndBUBRow() {
         // setup
         Mockery mockingContext = new Mockery();
         final Values2D values = mockingContext.mock(Values2D.class);
 
-        mockingContext.checking(new Expectations() {{
-            oneOf(values).getColumnCount();
-            will(returnValue(2));
-            oneOf(values).getValue(1, 0);
-            will(returnValue(6.0));
-            oneOf(values).getValue(1, 1);
-            will(returnValue(null));
-        }});
+        mockingContext.checking(new Expectations() {
+            {
+                oneOf(values).getColumnCount();
+                will(returnValue(2));
+                oneOf(values).getValue(1, 0);
+                will(returnValue(6.0));
+                oneOf(values).getValue(1, 1);
+                will(returnValue(null));
+            }
+        });
 
         // exercise
         double result = DataUtilities.calculateRowTotal(values, 1);
 
         // verify
-        assertEquals(6.0, result, .000000001d);
+        assertEquals("The row total should handle null values correctly", 6.0, result, .000000001d);
         mockingContext.assertIsSatisfied();
 
         // tear-down: NONE in this test method
     }
-	
-	// EC4 (BLB)
-	@Test
+
+    // EC4 (BLB)
+    @Test
     public void calculateRowTotalForBLBRow() {
         // setup
         Mockery mockingContext = new Mockery();
         final Values2D values = mockingContext.mock(Values2D.class);
 
-        mockingContext.checking(new Expectations() {{
-            oneOf(values).getColumnCount();
-            will(returnValue(2));
-            allowing(values).getValue(with(equal(-1)), with(any(int.class)));
-            will(returnValue(null));
-        }});
+        mockingContext.checking(new Expectations() {
+            {
+                oneOf(values).getColumnCount();
+                will(returnValue(2));
+                allowing(values).getValue(with(equal(-1)), with(any(int.class)));
+                will(returnValue(null));
+            }
+        });
 
         // exercise
         double result = DataUtilities.calculateRowTotal(values, -1);
 
         // verify
-        assertEquals(0.0, result, .000000001d);
+        assertEquals("The row total for a row index below the lower bound should be 0.0", 0.0, result, .000000001d);
         mockingContext.assertIsSatisfied();
 
         // tear-down: NONE in this test method
     }
-	
-	// EC6 (UB)
-	@Test
+
+    // EC6 (UB)
+    @Test
     public void calculateRowTotalForUBRow() {
         // setup
         Mockery mockingContext = new Mockery();
         final Values2D values = mockingContext.mock(Values2D.class);
 
-        mockingContext.checking(new Expectations() {{
-            oneOf(values).getColumnCount();
-            will(returnValue(2));
-            allowing(values).getValue(with(equal(2)), with(any(int.class)));
-            will(returnValue(null));
-        }});
+        mockingContext.checking(new Expectations() {
+            {
+                oneOf(values).getColumnCount();
+                will(returnValue(2));
+                allowing(values).getValue(with(equal(2)), with(any(int.class)));
+                will(returnValue(null));
+            }
+        });
 
         // exercise
         double result = DataUtilities.calculateRowTotal(values, 2);
 
         // verify
-        assertEquals(0.0, result, .000000001d);
+        assertEquals("The row total for a row index above the upper bound should be 0.0", 0.0, result, .000000001d);
         mockingContext.assertIsSatisfied();
 
         // tear-down: NONE in this test method
     }
 
-	// ----------------------------
-	// createNumberArray(double[] data)
-	// data: { EC1: valid non-null array, EC2: null array, EC3: empty array,
+    // ----------------------------
+    // createNumberArray(double[] data)
+    // data: { EC1: valid non-null array, EC2: null array, EC3: empty array,
 	//	       EC4: mixed negative/positive values, EC5: contains NaN/Infinity }
 	//	     BVA: N/A
-	// ----------------------------
+    // ----------------------------
 
-	// EC1: valid non-null array
-	@Test
-	public void createNumberArrayWithValidData() {
-		// setup
-		double[] data = { 1.5, 2.0, 3.5 };
-		Number[] expected = { 1.5, 2.0, 3.5 };
-		
-		// exercise
-		Number[] result = DataUtilities.createNumberArray(data);
-		
-		// verify
-		assertArrayEquals("The created Number array should match the input double array", expected, result);
-	}
+    // EC1: valid non-null array
+    @Test
+    public void createNumberArrayWithValidData() {
+        // setup
+        double[] data = { 1.5, 2.0, 3.5 };
+        Number[] expected = { 1.5, 2.0, 3.5 };
 
-	// EC2: null array
-	@Test(expected = InvalidParameterException.class)
-	public void createNumberArrayForNull() {
-		// exercise
-		DataUtilities.createNumberArray(null);
-	}
+        // exercise
+        Number[] result = DataUtilities.createNumberArray(data);
 
-	// EC3: empty array
-	@Test
-	public void createNumberArrayWithEmptyArray() {
-		// setup
-		double[] data = {};
-		Number[] expected = {};
-		
-		// exercise
-		Number[] result = DataUtilities.createNumberArray(data);
-		
-		// verify
-		assertArrayEquals("The created Number array should be empty", expected, result);
-	}
+        // verify
+        assertArrayEquals("The created Number array should match the input double array", expected, result);
+    }
 
-	// EC4: mixed negative/positive values
-	@Test
-	public void createNumberArrayWithMixedValues() {
-		// setup
-		double[] data = { -1.5, 0.0, 4.2 };
-		Number[] expected = { -1.5, 0.0, 4.2 };
-		
-		// exercise
-		Number[] result = DataUtilities.createNumberArray(data);
-		
-		// verify
+    // EC2: null array
+    @Test(expected = InvalidParameterException.class)
+    public void createNumberArrayForNull() {
+        // exercise
+        DataUtilities.createNumberArray(null);
+    }
+
+    // EC3: empty array
+    @Test
+    public void createNumberArrayWithEmptyArray() {
+        // setup
+        double[] data = {};
+        Number[] expected = {};
+
+        // exercise
+        Number[] result = DataUtilities.createNumberArray(data);
+
+        // verify
+        assertArrayEquals("The created Number array should be empty", expected, result);
+    }
+
+    // EC4: mixed negative/positive values
+    @Test
+    public void createNumberArrayWithMixedValues() {
+        // setup
+        double[] data = { -1.5, 0.0, 4.2 };
+        Number[] expected = { -1.5, 0.0, 4.2 };
+
+        // exercise
+        Number[] result = DataUtilities.createNumberArray(data);
+
+        // verify
 		assertArrayEquals("The created Number array should handle mixed positive, negative, and zero values", expected, result);
-	}
+    }
 
-	// EC5: contains NaN/Infinity
-	@Test
-	public void createNumberArrayWithSpecialValues() {
-		// setup
-		double[] data = { Double.NaN, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY };
-		Number[] expected = { Double.NaN, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY };
-		
-		// exercise
-		Number[] result = DataUtilities.createNumberArray(data);
-		
-		// verify
-		assertArrayEquals("The created Number array should correctly store NaN and Infinity values", expected, result);
-	}
+    // EC5: contains NaN/Infinity
+    @Test
+    public void createNumberArrayWithSpecialValues() {
+        // setup
+        double[] data = { Double.NaN, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY };
+        Number[] expected = { Double.NaN, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY };
 
-	// ----------------------------
-	// createNumberArray2D(double[][] data)
-	// data: { EC1: valid non-null rectangular 2D array, EC2: null outer array,
+        // exercise
+        Number[] result = DataUtilities.createNumberArray(data);
+
+        // verify
+        assertArrayEquals("The created Number array should correctly store NaN and Infinity values", expected, result);
+    }
+
+    // ----------------------------
+    // createNumberArray2D(double[][] data)
+    // data: { EC1: valid non-null rectangular 2D array, EC2: null outer array,
 	//	       EC3: contains null inner row, EC4: empty outer array,
 	//	       EC5: some empty inner rows, EC6: contains NaN/Infinity }
 	//	     BVA: N/A
-	// ----------------------------
+    // ----------------------------
 
-	// EC1: valid non-null rectangular 2D array
-	@Test
-	public void createNumberArray2DWithValidData() {
-		// setup
-		double[][] data = { { 1.5, 2.5 }, { 3.5, 4.5 } };
-		Number[][] expected = { { 1.5, 2.5 }, { 3.5, 4.5 } };
-		
-		// exercise
-		Number[][] result = DataUtilities.createNumberArray2D(data);
-		
-		// verify
-		assertEquals("Outer array length should be 2", expected.length, result.length);
-		assertArrayEquals("First inner array should match", expected[0], result[0]);
-		assertArrayEquals("Second inner array should match", expected[1], result[1]);
-	}
+    // EC1: valid non-null rectangular 2D array
+    @Test
+    public void createNumberArray2DWithValidData() {
+        // setup
+        double[][] data = { { 1.5, 2.5 }, { 3.5, 4.5 } };
+        Number[][] expected = { { 1.5, 2.5 }, { 3.5, 4.5 } };
 
-	// EC2: null outer array
-	@Test(expected = InvalidParameterException.class)
-	public void createNumberArray2DForNull() {
-		// exercise
-		DataUtilities.createNumberArray2D(null);
-	}
+        // exercise
+        Number[][] result = DataUtilities.createNumberArray2D(data);
 
-	// EC3: contains null inner row
-	@Test(expected = InvalidParameterException.class)
-	public void createNumberArray2DWithNullInnerRow() {
-		// setup
-		double[][] data = { { 1.5, 2.5 }, null };
-		
-		// exercise
-		DataUtilities.createNumberArray2D(data);
-	}
+        // verify
+        assertEquals("Outer array length should be 2", expected.length, result.length);
+        assertArrayEquals("First inner array should match", expected[0], result[0]);
+        assertArrayEquals("Second inner array should match", expected[1], result[1]);
+    }
 
-	// EC4: empty outer array
-	@Test
-	public void createNumberArray2DWithEmptyOuterArray() {
-		// setup
-		double[][] data = {};
-		
-		// exercise
-		Number[][] result = DataUtilities.createNumberArray2D(data);
-		
-		// verify
-		assertEquals("Resulting outer array should be empty", 0, result.length);
-	}
+    // EC2: null outer array
+    @Test(expected = InvalidParameterException.class)
+    public void createNumberArray2DForNull() {
+        // exercise
+        DataUtilities.createNumberArray2D(null);
+    }
 
-	// EC5: some empty inner rows
-	@Test
-	public void createNumberArray2DWithEmptyInnerRow() {
-		// setup
-		double[][] data = { { 1.5, 2.5 }, {} };
-		Number[] expectedFirstRow = { 1.5, 2.5 };
-		Number[] expectedSecondRow = {};
-		
-		// exercise
-		Number[][] result = DataUtilities.createNumberArray2D(data);
-		
-		// verify
-		assertEquals("Outer array length should be 2", 2, result.length);
-		assertArrayEquals("First inner array should match", expectedFirstRow, result[0]);
-		assertArrayEquals("Second inner array should be empty", expectedSecondRow, result[1]);
-	}
+    // EC3: contains null inner row
+    @Test(expected = InvalidParameterException.class)
+    public void createNumberArray2DWithNullInnerRow() {
+        // setup
+        double[][] data = { { 1.5, 2.5 }, null };
 
-	// EC6: contains NaN/Infinity
-	@Test
-	public void createNumberArray2DWithSpecialValues() {
-		// setup
-		double[][] data = { { Double.NaN, Double.POSITIVE_INFINITY }, { Double.NEGATIVE_INFINITY, 0.0 } };
-		Number[][] expected = { { Double.NaN, Double.POSITIVE_INFINITY }, { Double.NEGATIVE_INFINITY, 0.0 } };
-		
-		// exercise
-		Number[][] result = DataUtilities.createNumberArray2D(data);
-		
-		// verify
-		assertEquals("Outer array length should be 2", expected.length, result.length);
-		assertArrayEquals("First inner array should match special values", expected[0], result[0]);
-		assertArrayEquals("Second inner array should match special values", expected[1], result[1]);
-	}
+        // exercise
+        DataUtilities.createNumberArray2D(data);
+    }
 
-	// ----------------------------
-	// getCumulativePercentages(KeyedValues data)
-	// data: { EC1: valid non-null with positive values,
+    // EC4: empty outer array
+    @Test
+    public void createNumberArray2DWithEmptyOuterArray() {
+        // setup
+        double[][] data = {};
+
+        // exercise
+        Number[][] result = DataUtilities.createNumberArray2D(data);
+
+        // verify
+        assertEquals("Resulting outer array should be empty", 0, result.length);
+    }
+
+    // EC5: some empty inner rows
+    @Test
+    public void createNumberArray2DWithEmptyInnerRow() {
+        // setup
+        double[][] data = { { 1.5, 2.5 }, {} };
+        Number[] expectedFirstRow = { 1.5, 2.5 };
+        Number[] expectedSecondRow = {};
+
+        // exercise
+        Number[][] result = DataUtilities.createNumberArray2D(data);
+
+        // verify
+        assertEquals("Outer array length should be 2", 2, result.length);
+        assertArrayEquals("First inner array should match", expectedFirstRow, result[0]);
+        assertArrayEquals("Second inner array should be empty", expectedSecondRow, result[1]);
+    }
+
+    // EC6: contains NaN/Infinity
+    @Test
+    public void createNumberArray2DWithSpecialValues() {
+        // setup
+        double[][] data = { { Double.NaN, Double.POSITIVE_INFINITY }, { Double.NEGATIVE_INFINITY, 0.0 } };
+        Number[][] expected = { { Double.NaN, Double.POSITIVE_INFINITY }, { Double.NEGATIVE_INFINITY, 0.0 } };
+
+        // exercise
+        Number[][] result = DataUtilities.createNumberArray2D(data);
+
+        // verify
+        assertEquals("Outer array length should be 2", expected.length, result.length);
+        assertArrayEquals("First inner array should match special values", expected[0], result[0]);
+        assertArrayEquals("Second inner array should match special values", expected[1], result[1]);
+    }
+
+    // ----------------------------
+    // getCumulativePercentages(KeyedValues data)
+    // data: { EC1: valid non-null with positive values,
 	//	       EC2: null data,
 	//	       EC3: contains zeros,
 	//	       EC4: contains negative values,
 	//	       EC5: contains null item values,
 	//	       EC6: sum of all values = 0 }
 	//	      BVA: N/A
-	// ----------------------------
+    // ----------------------------
+
+    // EC1
+    @Test
+    public void getCumulativePercentagesForPositiveValues() {
+        // setup
+        Mockery mockingContext = new Mockery();
+        final KeyedValues values = mockingContext.mock(KeyedValues.class);
+
+        mockingContext.checking(new Expectations() {
+            {
+                allowing(values).getItemCount();
+                will(returnValue(3));
+                allowing(values).getKey(0);
+                will(returnValue(0));
+                allowing(values).getKey(1);
+                will(returnValue(1));
+                allowing(values).getKey(2);
+                will(returnValue(2));
+                allowing(values).getValue(0);
+                will(returnValue(5));
+                allowing(values).getValue(1);
+                will(returnValue(9));
+                allowing(values).getValue(2);
+                will(returnValue(2));
+            }
+        });
+
+        // exercise
+        KeyedValues result = DataUtilities.getCumulativePercentages(values);
+
+        // verify
+        assertEquals("The first cumulative percentage should be correct for positive values", 0.3125,
+                result.getValue(0).doubleValue(), 0.000000001d);
+        assertEquals("The second cumulative percentage should be correct for positive values", 0.875,
+                result.getValue(1).doubleValue(), 0.000000001d);
+        assertEquals("The third cumulative percentage should be correct for positive values", 1.0,
+                result.getValue(2).doubleValue(), 0.000000001d);
+        mockingContext.assertIsSatisfied();
+    }
+
+    // EC2
+    @Test(expected = InvalidParameterException.class)
+    public void getCumulativePercentagesForNull() {
+        // exercise
+        DataUtilities.getCumulativePercentages(null);
+    }
+
+    // EC3
+    @Test
+    public void getCumulativePercentagesForDataContainsZero() {
+        // setup
+        Mockery mockingContext = new Mockery();
+        final KeyedValues values = mockingContext.mock(KeyedValues.class);
+
+        mockingContext.checking(new Expectations() {
+            {
+                allowing(values).getItemCount();
+                will(returnValue(2));
+                allowing(values).getKey(0);
+                will(returnValue(0));
+                allowing(values).getKey(1);
+                will(returnValue(1));
+                allowing(values).getValue(0);
+                will(returnValue(0));
+                allowing(values).getValue(1);
+                will(returnValue(5));
+            }
+        });
+
+        // exercise
+        KeyedValues result = DataUtilities.getCumulativePercentages(values);
+
+        // verify
+        assertEquals("The cumulative percentage for a zero value should be correct", 0.0,
+                result.getValue(0).doubleValue(), 0.000000001d);
+        assertEquals("The cumulative percentage after a zero value should be correct", 1.0,
+                result.getValue(1).doubleValue(), 0.000000001d);
+        mockingContext.assertIsSatisfied();
+    }
+
+    // EC4
+    @Test
+    public void getCumulativePercentagesForDataContainsNegative() {
+        // setup
+        Mockery mockingContext = new Mockery();
+        final KeyedValues values = mockingContext.mock(KeyedValues.class);
+
+        // values [-1, 2] -> total = 1, cumulative ratios: [-1/1, (-1+2)/1] = [-1.0,
+        // 1.0]
+        mockingContext.checking(new Expectations() {
+            {
+                allowing(values).getItemCount();
+                will(returnValue(2));
+                allowing(values).getKey(0);
+                will(returnValue(0));
+                allowing(values).getKey(1);
+                will(returnValue(1));
+                allowing(values).getValue(0);
+                will(returnValue(-1));
+                allowing(values).getValue(1);
+                will(returnValue(2));
+            }
+        });
+
+        // exercise
+        KeyedValues result = DataUtilities.getCumulativePercentages(values);
+
+        // verify
+        assertEquals("The cumulative percentage should handle negative values correctly", -1.0,
+                result.getValue(0).doubleValue(), 0.000000001d);
+        assertEquals("The cumulative percentage after a negative value should be correct", 1.0,
+                result.getValue(1).doubleValue(), 0.000000001d);
+        mockingContext.assertIsSatisfied();
+    }
+
+    // EC5
+    @Test
+    public void getCumulativePercentagesForDataContainsNull() {
+        // setup
+        Mockery mockingContext = new Mockery();
+        final KeyedValues values = mockingContext.mock(KeyedValues.class);
+
+        mockingContext.checking(new Expectations() {
+            {
+                allowing(values).getItemCount();
+                will(returnValue(2));
+                allowing(values).getKey(0);
+                will(returnValue(0));
+                allowing(values).getKey(1);
+                will(returnValue(1));
+                allowing(values).getValue(0);
+                will(returnValue(5));
+                allowing(values).getValue(1);
+                will(returnValue(null));
+            }
+        });
+
+        // exercise
+        KeyedValues result = DataUtilities.getCumulativePercentages(values);
+
+        // verify
+        assertEquals("The cumulative percentage before a null value should be correct", 1.0,
+                result.getValue(0).doubleValue(), 0.000000001d);
+        assertEquals("The cumulative percentage for a null value should be correct", 1.0,
+                result.getValue(1).doubleValue(), 0.000000001d);
+        mockingContext.assertIsSatisfied();
+    }
+
+    // EC6
+    @Test
+    public void getCumulativePercentagesForDataSumIsZero() {
+        // setup
+        Mockery mockingContext = new Mockery();
+        final KeyedValues values = mockingContext.mock(KeyedValues.class);
+
+        mockingContext.checking(new Expectations() {
+            {
+                allowing(values).getItemCount();
+                will(returnValue(3));
+                allowing(values).getKey(0);
+                will(returnValue(0));
+                allowing(values).getKey(1);
+                will(returnValue(1));
+                allowing(values).getKey(2);
+                will(returnValue(2));
+                allowing(values).getValue(0);
+                will(returnValue(0));
+                allowing(values).getValue(1);
+                will(returnValue(0));
+                allowing(values).getValue(2);
+                will(returnValue(0));
+            }
+        });
+
+        // exercise
+        KeyedValues result = DataUtilities.getCumulativePercentages(values);
+
+        // verify
+        assertTrue("Cumulative percentage should be NaN when the sum is zero (item 0)",
+                Double.isNaN(result.getValue(0).doubleValue()));
+        assertTrue("Cumulative percentage should be NaN when the sum is zero (item 1)",
+                Double.isNaN(result.getValue(1).doubleValue()));
+        assertTrue("Cumulative percentage should be NaN when the sum is zero (item 2)",
+                Double.isNaN(result.getValue(2).doubleValue()));
+        mockingContext.assertIsSatisfied();
+    }
 
 }
