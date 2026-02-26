@@ -321,7 +321,85 @@ public class DataUtilitiesTest {
 	//	       EC5: some empty inner rows, EC6: contains NaN/Infinity }
 	//	     BVA: N/A
 	// ----------------------------
-	
+
+	// EC1: valid non-null rectangular 2D array
+	@Test
+	public void createNumberArray2DWithValidData() {
+		// setup
+		double[][] data = { { 1.5, 2.5 }, { 3.5, 4.5 } };
+		Number[][] expected = { { 1.5, 2.5 }, { 3.5, 4.5 } };
+		
+		// exercise
+		Number[][] result = DataUtilities.createNumberArray2D(data);
+		
+		// verify
+		assertEquals("Outer array length should be 2", expected.length, result.length);
+		assertArrayEquals("First inner array should match", expected[0], result[0]);
+		assertArrayEquals("Second inner array should match", expected[1], result[1]);
+	}
+
+	// EC2: null outer array
+	@Test(expected = InvalidParameterException.class)
+	public void createNumberArray2DForNull() {
+		// exercise
+		DataUtilities.createNumberArray2D(null);
+	}
+
+	// EC3: contains null inner row
+	@Test(expected = InvalidParameterException.class)
+	public void createNumberArray2DWithNullInnerRow() {
+		// setup
+		double[][] data = { { 1.5, 2.5 }, null };
+		
+		// exercise
+		DataUtilities.createNumberArray2D(data);
+	}
+
+	// EC4: empty outer array
+	@Test
+	public void createNumberArray2DWithEmptyOuterArray() {
+		// setup
+		double[][] data = {};
+		
+		// exercise
+		Number[][] result = DataUtilities.createNumberArray2D(data);
+		
+		// verify
+		assertEquals("Resulting outer array should be empty", 0, result.length);
+	}
+
+	// EC5: some empty inner rows
+	@Test
+	public void createNumberArray2DWithEmptyInnerRow() {
+		// setup
+		double[][] data = { { 1.5, 2.5 }, {} };
+		Number[] expectedFirstRow = { 1.5, 2.5 };
+		Number[] expectedSecondRow = {};
+		
+		// exercise
+		Number[][] result = DataUtilities.createNumberArray2D(data);
+		
+		// verify
+		assertEquals("Outer array length should be 2", 2, result.length);
+		assertArrayEquals("First inner array should match", expectedFirstRow, result[0]);
+		assertArrayEquals("Second inner array should be empty", expectedSecondRow, result[1]);
+	}
+
+	// EC6: contains NaN/Infinity
+	@Test
+	public void createNumberArray2DWithSpecialValues() {
+		// setup
+		double[][] data = { { Double.NaN, Double.POSITIVE_INFINITY }, { Double.NEGATIVE_INFINITY, 0.0 } };
+		Number[][] expected = { { Double.NaN, Double.POSITIVE_INFINITY }, { Double.NEGATIVE_INFINITY, 0.0 } };
+		
+		// exercise
+		Number[][] result = DataUtilities.createNumberArray2D(data);
+		
+		// verify
+		assertEquals("Outer array length should be 2", expected.length, result.length);
+		assertArrayEquals("First inner array should match special values", expected[0], result[0]);
+		assertArrayEquals("Second inner array should match special values", expected[1], result[1]);
+	}
 
 	// ----------------------------
 	// getCumulativePercentages(KeyedValues data)
