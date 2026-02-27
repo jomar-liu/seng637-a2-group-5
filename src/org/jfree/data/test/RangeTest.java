@@ -125,12 +125,12 @@ public class RangeTest {
         assertEquals("Central value of range (1.0 to 1000000.0) should be 500000.5", 500000.5, largeRange.getCentralValue(), 0.0001);
     }
 
-	/*
-	 * @Test public void testGetCentralValueReverseRange() { // Reverse boundaries
-	 * (5.0 to 1.0) Range reverseRange = new Range(5.0, 1.0); assertEquals(3.0,
-	 * reverseRange.getCentralValue(), 0.0001); // Central value should still be
-	 * calculated as the average }
-	 */
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testGetCentralValueReverseRange() { // Reverse boundaries(5.0 to 1.0)
+	     Range reverseRange = new Range(5.0, 1.0);
+	     assertEquals(3.0,reverseRange.getCentralValue(), 0.0001); // Central value should still be calculated as the average
+	 }
 
 
 
@@ -166,13 +166,13 @@ public class RangeTest {
         assertEquals("The upper bound of the range should be 1000000", 1000000.0, largeRange.getUpperBound(), .000000001d);
     }
 
-	/*
-	 * @Test public void testUpperBoundReverseRange() { // Verifying the upper bound
-	 * when the range is reversed (from 5.0 to 1.0) Range reverseRange = new
-	 * Range(5.0, 1.0);
-	 * assertEquals("The upper bound of the range should still be 5", 5.0,
-	 * reverseRange.getUpperBound(), .000000001d); }
-	 */
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testUpperBoundReverseRange() { // Verifying the upper bound when the range is reversed (from 5.0 to 1.0)
+        Range reverseRange = new Range(5.0, 1.0);
+	    assertEquals("The upper bound of the range should still be 5", 5.0,reverseRange.getUpperBound(), .000000001d);
+	 }
+
 
 
 
@@ -208,12 +208,14 @@ public class RangeTest {
         assertEquals("The lower bound of the range should be 1", 1.0, largeRange.getLowerBound(), .000000001d);
     }
 
-	/*
-	 * @Test public void testLowerBoundReverseRange() { // TC5: Verifying the lower
-	 * bound when the range is reversed (from 5.0 to 1.0) Range reverseRange = new
-	 * Range(5.0, 1.0); assertEquals("The lower bound of the range should be 1",
-	 * 1.0, reverseRange.getLowerBound(), .000000001d); }
-	 */
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testLowerBoundReverseRange() {
+	    // TC5: Verifying the lower bound when the range is reversed (from 5.0 to 1.0)
+	    Range reverseRange = new Range(5.0, 1.0);
+	    assertEquals("The lower bound of the range should be 1",1.0, reverseRange.getLowerBound(), .000000001d);
+	 }
+
 
 }
 
