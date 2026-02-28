@@ -126,7 +126,7 @@ public class RangeTest {
     }
 
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testGetCentralValueReverseRange() { // Reverse boundaries(5.0 to 1.0)
 	     Range reverseRange = new Range(5.0, 1.0);
 	     assertEquals(3.0,reverseRange.getCentralValue(), 0.0001); // Central value should still be calculated as the average
@@ -140,7 +140,7 @@ public class RangeTest {
 
 
     @Test
-    public void testUpperBoundShouldBeOne() {
+    public void testUpperBound() {
         // Verifying that the upper bound of the range is correctly set to 5 for the range (1 to 5)
         assertEquals("The upper bound of the range should be 5", 5.0, range.getUpperBound(), .000000001d);
     }
@@ -167,7 +167,7 @@ public class RangeTest {
     }
 
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testUpperBoundReverseRange() { // Verifying the upper bound when the range is reversed (from 5.0 to 1.0)
         Range reverseRange = new Range(5.0, 1.0);
 	    assertEquals("The upper bound of the range should still be 5", 5.0,reverseRange.getUpperBound(), .000000001d);
@@ -182,7 +182,7 @@ public class RangeTest {
 
 
     @Test
-    public void testLowerBoundShouldBeZero() {
+    public void testLowerBound() {
         // Verifying that the lower bound of the range is correctly set to 1 for the range (1 to 5)
         assertEquals("The lower bound of the range should be 1", 1, range.getLowerBound(), .000000001d);
     }
@@ -209,7 +209,7 @@ public class RangeTest {
     }
 
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testLowerBoundReverseRange() {
 	    // TC5: Verifying the lower bound when the range is reversed (from 5.0 to 1.0)
 	    Range reverseRange = new Range(5.0, 1.0);
